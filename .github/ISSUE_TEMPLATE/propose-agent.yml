@@ -1,0 +1,37 @@
+name: Propose a Free AI Agent
+description: Suggest a free AI model, endpoint, or tool to add to EverSquad.
+title: "[New Agent]: "
+labels: ["new-agent", "good first issue"]
+body:
+  - type: input
+    id: agent_name
+    attributes:
+      label: Agent / Model Name
+      placeholder: "e.g., Pollinations Flux, Qwen-Coder Free"
+    validations:
+      required: true
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Primary Domain
+      options:
+        - code
+        - writing
+        - design
+        - data
+        - marketing
+        - education
+    validations:
+      required: true
+  - type: input
+    id: endpoint
+    attributes:
+      label: Website or API Endpoint URL
+      placeholder: "https://..."
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes & estimated free quota
+      placeholder: "Why is this agent useful?"

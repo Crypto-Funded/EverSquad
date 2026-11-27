@@ -1,0 +1,165 @@
+{
+  "updatedAt": "2026-11-26T23:53:31.692Z",
+  "agents": {
+    "pollinations-text": {
+      "id": "pollinations-text",
+      "name": "Pollinations Text",
+      "domain": "writing",
+      "status": "online",
+      "latencyMs": 750,
+      "uptimeScore": 100,
+      "lastChecked": "2026-11-26T23:53:31.692Z",
+      "history": [
+        {
+          "time": "2026-11-26T23:53:31.692Z",
+          "status": "online",
+          "latencyMs": 750
+        }
+      ]
+    },
+    "pollinations-code": {
+      "id": "pollinations-code",
+      "name": "Pollinations Coder",
+      "domain": "code",
+      "status": "online",
+      "latencyMs": 134,
+      "uptimeScore": 100,
+      "lastChecked": "2026-11-26T23:53:31.692Z",
+      "history": [
+        {
+          "time": "2026-11-26T23:53:31.692Z",
+          "status": "online",
+          "latencyMs": 134
+        }
+      ]
+    },
+    "pollinations-image": {
+      "id": "pollinations-image",
+      "name": "Pollinations Flux",
+      "domain": "design",
+      "status": "online",
+      "latencyMs": 1360,
+      "uptimeScore": 100,
+      "lastChecked": "2026-11-26T23:53:31.692Z",
+      "history": [
+        {
+          "time": "2026-11-26T23:53:31.692Z",
+          "status": "online",
+          "latencyMs": 1360
+        }
+      ]
+    },
+    "pollinations-marketing": {
+      "id": "pollinations-marketing",
+      "name": "Pollinations Strategist",
+      "domain": "marketing",
+      "status": "online",
+      "latencyMs": 128,
+      "uptimeScore": 100,
+      "lastChecked": "2026-11-26T23:53:31.692Z",
+      "history": [
+        {
+          "time": "2026-11-26T23:53:31.692Z",
+          "status": "online",
+          "latencyMs": 128
+        }
+      ]
+    },
+    "pollinations-data": {
+      "id": "pollinations-data",
+      "name": "Pollinations Analyst",
+      "domain": "data",
+      "status": "online",
+      "latencyMs": 129,
+      "uptimeScore": 100,
+      "lastChecked": "2026-11-26T23:53:31.692Z",
+      "history": [
+        {
+          "time": "2026-11-26T23:53:31.692Z",
+          "status": "online",
+          "latencyMs": 129
+        }
+      ]
+    },
+    "openrouter-free-pool": {
+      "id": "openrouter-free-pool",
+      "name": "OpenRouter Free Models",
+      "domain": "code",
+      "status": "online",
+      "latencyMs": 121,
+      "uptimeScore": 100,
+      "lastChecked": "2026-11-26T23:53:31.692Z",
+      "history": [
+        {
+          "time": "2026-11-26T23:53:31.692Z",
+          "status": "online",
+          "latencyMs": 121
+        }
+      ]
+    },
+    "groq-free-llama": {
+      "id": "groq-free-llama",
+      "name": "Groq Ultra-Fast Tier",
+      "domain": "data",
+      "status": "online",
+      "latencyMs": 333,
+      "uptimeScore": 100,
+      "lastChecked": "2026-11-26T23:53:31.692Z",
+      "history": [
+        {
+          "time": "2026-11-26T23:53:31.692Z",
+          "status": "online",
+          "latencyMs": 333
+        }
+      ]
+    },
+    "huggingface-inference": {
+      "id": "huggingface-inference",
+      "name": "HF Public Inference",
+      "domain": "marketing",
+      "status": "online",
+      "latencyMs": 128,
+      "uptimeScore": 100,
+      "lastChecked": "2026-11-26T23:53:31.692Z",
+      "history": [
+        {
+          "time": "2026-11-26T23:53:31.692Z",
+          "status": "online",
+          "latencyMs": 128
+        }
+      ]
+    },
+    "webllm-local-code": {
+      "id": "webllm-local-code",
+      "name": "WebGPU Local Fallback (Code)",
+      "domain": "code",
+      "status": "online",
+      "latencyMs": 5,
+      "uptimeScore": 100,
+      "lastChecked": "2026-11-26T23:53:31.692Z",
+      "history": [
+        {
+          "time": "2026-11-26T23:53:31.692Z",
+          "status": "online",
+          "latencyMs": 5
+        }
+      ]
+    },
+    "webllm-local-writing": {
+      "id": "webllm-local-writing",
+      "name": "WebGPU Local Fallback (Text)",
+      "domain": "writing",
+      "status": "online",
+      "latencyMs": 5,
+      "uptimeScore": 100,
+      "lastChecked": "2026-11-26T23:53:31.692Z",
+      "history": [
+        {
+          "time": "2026-11-26T23:53:31.692Z",
+          "status": "online",
+          "latencyMs": 5
+        }
+      ]
+    }
+  }
+}

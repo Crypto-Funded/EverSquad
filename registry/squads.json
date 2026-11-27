@@ -1,0 +1,61 @@
+[
+  {
+    "id": "squad-web-builder",
+    "name": "Web App Builder",
+    "domain": "code",
+    "icon": "Code2",
+    "description": "Concoit, code et verifie une page web ou mini-app interactive.",
+    "roles": [
+      "Architecte UI",
+      "Developpeur Frontend",
+      "Relecteur Code"
+    ]
+  },
+  {
+    "id": "squad-content-studio",
+    "name": "Content & SEO Studio",
+    "domain": "writing",
+    "icon": "PenTool",
+    "description": "Planifie, redige et optimise des articles, e-mails ou scripts.",
+    "roles": [
+      "Stratege Editorial",
+      "Redacteur",
+      "Correcteur"
+    ]
+  },
+  {
+    "id": "squad-startup-launch",
+    "name": "Startup & Marketing",
+    "domain": "marketing",
+    "icon": "Rocket",
+    "description": "Cree le positionnement, slogans, pitch deck et plan de lancement.",
+    "roles": [
+      "Analyste Marche",
+      "Copywriter",
+      "Growth Hacker"
+    ]
+  },
+  {
+    "id": "squad-data-analyst",
+    "name": "Data & Structuration",
+    "domain": "data",
+    "icon": "BarChart3",
+    "description": "Transforme des notes brutes en tableaux et syntheses claires.",
+    "roles": [
+      "Extracteur",
+      "Analyste",
+      "Visualiseur"
+    ]
+  },
+  {
+    "id": "squad-design-visual",
+    "name": "Design & Visuels",
+    "domain": "design",
+    "icon": "Palette",
+    "description": "Genere des concepts visuels et illustrations gratuites.",
+    "roles": [
+      "Directeur Artistique",
+      "Generateur Images"
+    ]
+  }
+]

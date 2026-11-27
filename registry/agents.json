@@ -1,0 +1,122 @@
+[
+  {
+    "id": "pollinations-text",
+    "name": "Pollinations Text",
+    "provider": "Pollinations.ai",
+    "domain": "writing",
+    "description": "Generation de texte et redaction rapide sans cle API",
+    "endpoint": "https://text.pollinations.ai/",
+    "testUrl": "https://text.pollinations.ai/ping",
+    "authType": "none",
+    "estimatedQuota": "Illimite (Fair-use)",
+    "priority": 1
+  },
+  {
+    "id": "pollinations-code",
+    "name": "Pollinations Coder",
+    "provider": "Pollinations.ai",
+    "domain": "code",
+    "description": "Developpement HTML/CSS/JS/Python sans inscription",
+    "endpoint": "https://text.pollinations.ai/",
+    "testUrl": "https://text.pollinations.ai/ping",
+    "authType": "none",
+    "estimatedQuota": "Illimite (Fair-use)",
+    "priority": 1
+  },
+  {
+    "id": "pollinations-image",
+    "name": "Pollinations Flux",
+    "provider": "Pollinations.ai",
+    "domain": "design",
+    "description": "Creation d images et visuels gratuits instantanes",
+    "endpoint": "https://image.pollinations.ai/prompt/",
+    "testUrl": "https://image.pollinations.ai/",
+    "authType": "none",
+    "estimatedQuota": "Illimite (Fair-use)",
+    "priority": 1
+  },
+  {
+    "id": "pollinations-marketing",
+    "name": "Pollinations Strategist",
+    "provider": "Pollinations.ai",
+    "domain": "marketing",
+    "description": "Copywriting, slogans et plans de lancement sans compte",
+    "endpoint": "https://text.pollinations.ai/",
+    "testUrl": "https://text.pollinations.ai/ping",
+    "authType": "none",
+    "estimatedQuota": "Illimite (Fair-use)",
+    "priority": 1
+  },
+  {
+    "id": "pollinations-data",
+    "name": "Pollinations Analyst",
+    "provider": "Pollinations.ai",
+    "domain": "data",
+    "description": "Analyse, tableaux et structuration JSON gratuite",
+    "endpoint": "https://text.pollinations.ai/",
+    "testUrl": "https://text.pollinations.ai/ping",
+    "authType": "none",
+    "estimatedQuota": "Illimite (Fair-use)",
+    "priority": 1
+  },
+  {
+    "id": "openrouter-free-pool",
+    "name": "OpenRouter Free Models",
+    "provider": "OpenRouter (:free)",
+    "domain": "code",
+    "description": "Pool de modeles open-weight gratuits (via miroir proxy)",
+    "endpoint": "https://openrouter.ai/api/v1",
+    "testUrl": "https://openrouter.ai/api/v1/models",
+    "authType": "proxy_free_tier",
+    "estimatedQuota": "50-200 req/jour",
+    "priority": 2
+  },
+  {
+    "id": "groq-free-llama",
+    "name": "Groq Ultra-Fast Tier",
+    "provider": "Groq",
+    "domain": "data",
+    "description": "Inference ultra-rapide pour analyse et JSON",
+    "endpoint": "https://api.groq.com/openai/v1",
+    "testUrl": "https://groq.com/",
+    "authType": "proxy_free_tier",
+    "estimatedQuota": "Quota journalier gratuit",
+    "priority": 2
+  },
+  {
+    "id": "huggingface-inference",
+    "name": "HF Public Inference",
+    "provider": "Hugging Face",
+    "domain": "marketing",
+    "description": "Modeles ouverts pour idees et brainstorming",
+    "endpoint": "https://api-inference.huggingface.co/",
+    "testUrl": "https://huggingface.co/",
+    "authType": "proxy_free_tier",
+    "estimatedQuota": "Rate-limit horaire",
+    "priority": 2
+  },
+  {
+    "id": "webllm-local-code",
+    "name": "WebGPU Local Fallback (Code)",
+    "provider": "Browser (WebLLM)",
+    "domain": "code",
+    "description": "Moteur de secours local dans le navigateur (zero quota)",
+    "endpoint": "local://webgpu",
+    "testUrl": null,
+    "authType": "local_browser",
+    "estimatedQuota": "Infini (Local)",
+    "priority": 99
+  },
+  {
+    "id": "webllm-local-writing",
+    "name": "WebGPU Local Fallback (Text)",
+    "provider": "Browser (WebLLM)",
+    "domain": "writing",
+    "description": "Moteur de secours local hors-ligne pour redaction continue",
+    "endpoint": "local://webgpu",
+    "testUrl": null,
+    "authType": "local_browser",
+    "estimatedQuota": "Infini (Local)",
+    "priority": 99
+  }
+]
