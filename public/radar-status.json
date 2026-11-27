@@ -1,14 +1,14 @@
 {
-  "updatedAt": "2026-11-27T16:54:45.565Z",
+  "updatedAt": "2026-11-27T17:45:14.961Z",
   "agents": {
     "pollinations-text": {
       "id": "pollinations-text",
       "name": "Pollinations Text",
       "domain": "writing",
       "status": "online",
-      "latencyMs": 327,
+      "latencyMs": 339,
       "uptimeScore": 100,
-      "lastChecked": "2026-11-27T16:54:45.565Z",
+      "lastChecked": "2026-11-27T17:45:14.961Z",
       "history": [
         {
           "time": "2026-11-26T23:53:31.692Z",
@@ -84,6 +84,11 @@
           "time": "2026-11-27T16:54:45.565Z",
           "status": "online",
           "latencyMs": 327
+        },
+        {
+          "time": "2026-11-27T17:45:14.961Z",
+          "status": "online",
+          "latencyMs": 339
         }
       ]
     },
@@ -92,9 +97,9 @@
       "name": "Pollinations Coder",
       "domain": "code",
       "status": "online",
-      "latencyMs": 183,
+      "latencyMs": 260,
       "uptimeScore": 100,
-      "lastChecked": "2026-11-27T16:54:45.565Z",
+      "lastChecked": "2026-11-27T17:45:14.961Z",
       "history": [
         {
           "time": "2026-11-26T23:53:31.692Z",
@@ -170,6 +175,11 @@
           "time": "2026-11-27T16:54:45.565Z",
           "status": "online",
           "latencyMs": 183
+        },
+        {
+          "time": "2026-11-27T17:45:14.961Z",
+          "status": "online",
+          "latencyMs": 260
         }
       ]
     },
@@ -178,9 +188,9 @@
       "name": "Pollinations Flux",
       "domain": "design",
       "status": "online",
-      "latencyMs": 597,
+      "latencyMs": 1214,
       "uptimeScore": 100,
-      "lastChecked": "2026-11-27T16:54:45.565Z",
+      "lastChecked": "2026-11-27T17:45:14.961Z",
       "history": [
         {
           "time": "2026-11-26T23:53:31.692Z",
@@ -256,6 +266,11 @@
           "time": "2026-11-27T16:54:45.565Z",
           "status": "online",
           "latencyMs": 597
+        },
+        {
+          "time": "2026-11-27T17:45:14.961Z",
+          "status": "online",
+          "latencyMs": 1214
         }
       ]
     },
@@ -264,9 +279,9 @@
       "name": "Pollinations Strategist",
       "domain": "marketing",
       "status": "online",
-      "latencyMs": 162,
+      "latencyMs": 260,
       "uptimeScore": 100,
-      "lastChecked": "2026-11-27T16:54:45.565Z",
+      "lastChecked": "2026-11-27T17:45:14.961Z",
       "history": [
         {
           "time": "2026-11-26T23:53:31.692Z",
@@ -342,6 +357,11 @@
           "time": "2026-11-27T16:54:45.565Z",
           "status": "online",
           "latencyMs": 162
+        },
+        {
+          "time": "2026-11-27T17:45:14.961Z",
+          "status": "online",
+          "latencyMs": 260
         }
       ]
     },
@@ -350,9 +370,9 @@
       "name": "Pollinations Analyst",
       "domain": "data",
       "status": "online",
-      "latencyMs": 155,
+      "latencyMs": 213,
       "uptimeScore": 100,
-      "lastChecked": "2026-11-27T16:54:45.565Z",
+      "lastChecked": "2026-11-27T17:45:14.961Z",
       "history": [
         {
           "time": "2026-11-26T23:53:31.692Z",
@@ -428,6 +448,11 @@
           "time": "2026-11-27T16:54:45.565Z",
           "status": "online",
           "latencyMs": 155
+        },
+        {
+          "time": "2026-11-27T17:45:14.961Z",
+          "status": "online",
+          "latencyMs": 213
         }
       ]
     },
@@ -436,9 +461,9 @@
       "name": "OpenRouter Free Models",
       "domain": "code",
       "status": "online",
-      "latencyMs": 46,
+      "latencyMs": 35,
       "uptimeScore": 100,
-      "lastChecked": "2026-11-27T16:54:45.565Z",
+      "lastChecked": "2026-11-27T17:45:14.961Z",
       "history": [
         {
           "time": "2026-11-26T23:53:31.692Z",
@@ -514,6 +539,11 @@
           "time": "2026-11-27T16:54:45.565Z",
           "status": "online",
           "latencyMs": 46
+        },
+        {
+          "time": "2026-11-27T17:45:14.961Z",
+          "status": "online",
+          "latencyMs": 35
         }
       ]
     },
@@ -522,9 +552,9 @@
       "name": "Groq Ultra-Fast Tier",
       "domain": "data",
       "status": "online",
-      "latencyMs": 98,
+      "latencyMs": 117,
       "uptimeScore": 100,
-      "lastChecked": "2026-11-27T16:54:45.565Z",
+      "lastChecked": "2026-11-27T17:45:14.961Z",
       "history": [
         {
           "time": "2026-11-26T23:53:31.692Z",
@@ -600,6 +630,11 @@
           "time": "2026-11-27T16:54:45.565Z",
           "status": "online",
           "latencyMs": 98
+        },
+        {
+          "time": "2026-11-27T17:45:14.961Z",
+          "status": "online",
+          "latencyMs": 117
         }
       ]
     },
@@ -608,9 +643,9 @@
       "name": "HF Public Inference",
       "domain": "marketing",
       "status": "online",
-      "latencyMs": 55,
+      "latencyMs": 67,
       "uptimeScore": 100,
-      "lastChecked": "2026-11-27T16:54:45.565Z",
+      "lastChecked": "2026-11-27T17:45:14.961Z",
       "history": [
         {
           "time": "2026-11-26T23:53:31.692Z",
@@ -686,6 +721,11 @@
           "time": "2026-11-27T16:54:45.565Z",
           "status": "online",
           "latencyMs": 55
+        },
+        {
+          "time": "2026-11-27T17:45:14.961Z",
+          "status": "online",
+          "latencyMs": 67
         }
       ]
     },
@@ -696,7 +736,7 @@
       "status": "online",
       "latencyMs": 5,
       "uptimeScore": 100,
-      "lastChecked": "2026-11-27T16:54:45.565Z",
+      "lastChecked": "2026-11-27T17:45:14.961Z",
       "history": [
         {
           "time": "2026-11-26T23:53:31.692Z",
@@ -770,6 +810,11 @@
         },
         {
           "time": "2026-11-27T16:54:45.565Z",
+          "status": "online",
+          "latencyMs": 5
+        },
+        {
+          "time": "2026-11-27T17:45:14.961Z",
           "status": "online",
           "latencyMs": 5
         }
@@ -782,7 +827,7 @@
       "status": "online",
       "latencyMs": 5,
       "uptimeScore": 100,
-      "lastChecked": "2026-11-27T16:54:45.565Z",
+      "lastChecked": "2026-11-27T17:45:14.961Z",
       "history": [
         {
           "time": "2026-11-26T23:53:31.692Z",
@@ -856,6 +901,11 @@
         },
         {
           "time": "2026-11-27T16:54:45.565Z",
+          "status": "online",
+          "latencyMs": 5
+        },
+        {
+          "time": "2026-11-27T17:45:14.961Z",
           "status": "online",
           "latencyMs": 5
         }
