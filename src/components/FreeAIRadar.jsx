@@ -1,17 +1,34 @@
 import { useEffect, useState } from "react";
-import { Radio, Trophy, ArrowRight, Activity, Clock, ShieldCheck } from "lucide-react";
+import { Radio, Trophy, ArrowRight, Activity, Clock, ShieldCheck, RefreshCw } from "lucide-react";
 import { AGENTS, DOMAINS } from "../utils/relayRouter";
+
+const RAW_RADAR_URL = "https://raw.githubusercontent.com/Crypto-Funded/EverSquad/main/public/radar-status.json";
 
 export default function FreeAIRadar({ onSelectAgentDomain }) {
   const [radarData, setRadarData] = useState(null);
   const [selectedDomain, setSelectedDomain] = useState("all");
+  const [refreshing, setRefreshing] = useState(false);
+
+  async function loadRadar() {
+    setRefreshing(true);
+    try {
+      const liveRes = await fetch(RAW_RADAR_URL + "?t=" + Date.now());
+      if (liveRes.ok) {
+        setRadarData(await liveRes.json());
+        setRefreshing(false);
+        return;
+      }
+    } catch {}
+    try {
+      const localUrl = (import.meta.env.BASE_URL || "/") + "radar-status.json";
+      const localRes = await fetch(localUrl);
+      if (localRes.ok) setRadarData(await localRes.json());
+    } catch {}
+    setRefreshing(false);
+  }
 
   useEffect(function () {
-    const url = (import.meta.env.BASE_URL || "/") + "radar-status.json";
-    fetch(url)
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (data) { if (data) setRadarData(data); })
-      .catch(function () { setRadarData(null); });
+    loadRadar();
   }, []);
 
   const filteredAgents = selectedDomain === "all"
@@ -37,14 +54,20 @@ export default function FreeAIRadar({ onSelectAgentDomain }) {
         <div>
           <h2 className="text-xl font-bold flex items-center gap-2 text-white">
             <Radio className="w-5 h-5 text-emerald-400 animate-pulse" />
-            Free AI Radar — Meteo en direct des IA gratuites
+            Free AI Radar — Meteo en direct H24
           </h2>
           <p className="text-sm text-slate-400 mt-1">
-            Mis a jour automatiquement toutes les heures via GitHub Actions.
+            Synchronise en direct avec GitHub Actions toutes les heures.
             {radarData && radarData.updatedAt ? " Derniere verification : " + new Date(radarData.updatedAt).toLocaleString() : ""}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={loadRadar}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-sky-300 transition"
+          >
+            <RefreshCw className={"w-3.5 h-3.5 " + (refreshing ? "animate-spin" : "")} /> Actualiser
+          </button>
           <button
             onClick={function () { setSelectedDomain("all"); }}
             className={"px-3 py-1.5 rounded-xl text-xs font-medium transition " + (selectedDomain === "all" ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-300 hover:bg-slate-700")}

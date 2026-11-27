@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { Sparkles, Send, RefreshCw, Download, Share2, History, Eye, Code, Brain, Upload, Check, ShieldAlert, ArrowRightLeft } from "lucide-react";
+import { Sparkles, Send, RefreshCw, Download, Share2, History, Eye, Code, Brain, Upload, Check, ShieldAlert, ArrowRightLeft, Users } from "lucide-react";
 import { DOMAINS, SQUADS, getAgentsForDomain, enhancePrompt, executeWithRelay, encodeProjectUrl } from "../utils/relayRouter";
 
-export default function Studio({ domain, setDomain, exhaustedIds, activeAgent, onAgentUsed, onRelayTriggered, sharedProject, externalPrompt, onClearExternalPrompt }) {
+export default function Studio({ domain, setDomain, exhaustedIds, activeAgent, proxyUrl, onAgentUsed, onRelayTriggered, sharedProject, externalPrompt, onClearExternalPrompt }) {
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [debateMode, setDebateMode] = useState(false);
   const [messages, setMessages] = useState([
-    { role: "system", text: "Bienvenue sur EverSquad ! Choisissez votre domaine ou une Squad ci-dessous, decrivez votre projet et les agents gratuits collaborent sans inscription." }
+    { role: "system", text: "Bienvenue sur EverSquad v1.1 ! Choisissez un domaine, activez le Mode Debat (2 agents) si vous voulez une relecture automatique, et construisez sans inscription." }
   ]);
   const [deliverable, setDeliverable] = useState("");
   const [deliverableType, setDeliverableType] = useState("markdown");
@@ -55,30 +56,54 @@ export default function Studio({ domain, setDomain, exhaustedIds, activeAgent, o
       currentDeliverable: deliverable,
       localMemory: localMemory,
       exhaustedIds: exhaustedIds,
+      proxyUrl: proxyUrl,
       onRelay: function (ev) {
         onRelayTriggered(ev);
         setMessages(function (prev) {
-          return prev.concat([{
-            role: "relay",
-            text: "Relais Pit-Stop : " + ev.from.name + " -> " + ev.to.name + " (" + ev.reason + ")"
-          }]);
+          return prev.concat([{ role: "relay", text: "Relais Pit-Stop : " + ev.from.name + " -> " + ev.to.name + " (" + ev.reason + ")" }]);
         });
       }
     });
 
-    onAgentUsed(result.agent);
-    setDeliverable(result.deliverable);
-    setDeliverableType(result.type);
+    let finalDeliverable = result.deliverable;
+    let finalType = result.type;
+    let finalAgent = result.agent;
+    let finalRawText = result.rawText;
+
+    if (debateMode && finalType !== "image") {
+      setMessages(function (prev) {
+        return prev.concat([{ role: "relay", text: "Mode Debat : Un 2e agent relit, verifie et ameliore le brouillon..." }]);
+      });
+      const critiquePrompt = "Voici un brouillon produit pour (" + textToSend + "). Corrige les erreurs eventuelles, ameliore la qualite visuelle ou structurelle et renvoie uniquement la version finale amelioree :\n\n" + finalDeliverable.slice(0, 3000);
+      const review = await executeWithRelay({
+        domain: domain,
+        prompt: critiquePrompt,
+        currentDeliverable: finalDeliverable,
+        localMemory: localMemory,
+        exhaustedIds: exhaustedIds,
+        proxyUrl: proxyUrl,
+        onRelay: function () {}
+      });
+      if (review && review.deliverable && review.deliverable.length > 20) {
+        finalDeliverable = review.deliverable;
+        finalType = review.type;
+        finalRawText = "Version validee et amelioree apres relecture croisee (" + review.agent.name + ").";
+      }
+    }
+
+    onAgentUsed(finalAgent);
+    setDeliverable(finalDeliverable);
+    setDeliverableType(finalType);
     setCheckpoints(function (prev) {
       return prev.concat([{
         id: Date.now(),
-        label: "v" + (prev.length + 1) + " • " + result.agent.name,
-        deliverable: result.deliverable,
-        type: result.type
+        label: "v" + (prev.length + 1) + " • " + finalAgent.name,
+        deliverable: finalDeliverable,
+        type: finalType
       }]);
     });
     setMessages(function (prev) {
-      return prev.concat([{ role: "agent", agentName: result.agent.name, text: result.rawText }]);
+      return prev.concat([{ role: "agent", agentName: finalAgent.name, text: finalRawText }]);
     });
     setIsLoading(false);
   }
@@ -145,10 +170,17 @@ export default function Studio({ domain, setDomain, exhaustedIds, activeAgent, o
           })}
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={function () { setDebateMode(function (v) { return !v; }); }}
+            className={"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition " + (debateMode ? "bg-violet-500/20 border-violet-500/40 text-violet-300" : "bg-slate-800 border-slate-700 text-slate-400 hover:text-white")}
+            title="Deux agents relisent et ameliorent automatiquement la reponse"
+          >
+            <Users className="w-3.5 h-3.5" /> Mode Debat : {debateMode ? "ON" : "OFF"}
+          </button>
           {SQUADS.filter(function (s) { return s.domain === domain; }).map(function (sq) {
             return (
-              <span key={sq.id} className="text-xs px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-300">
-                Squad : {sq.name} ({sq.roles.join(" + ")})
+              <span key={sq.id} className="hidden xl:inline-block text-xs px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-300">
+                Squad : {sq.name}
               </span>
             );
           })}
@@ -156,11 +188,15 @@ export default function Studio({ domain, setDomain, exhaustedIds, activeAgent, o
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Panneau Gauche : Orchestrateur & Relais */}
         <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col h-[74vh]">
           <div className="p-3 border-b border-slate-800 bg-slate-900/90 rounded-t-2xl">
-            <p className="text-xs font-semibold text-slate-400 mb-2">File de Relais du domaine ({domain}) :</p>
+            <p className="text-xs font-semibold text-slate-400 mb-2">File de Relais ({domain}) :</p>
             <div className="flex flex-wrap gap-1.5">
+              {proxyUrl && (
+                <span className="text-[11px] px-2 py-1 rounded-lg border bg-sky-500/15 text-sky-300 border-sky-500/30">
+                  ● Miroir Cloud Actif
+                </span>
+              )}
               {domainAgents.map(function (a) {
                 const isExhausted = exhaustedIds.indexOf(a.id) !== -1;
                 const isCurrent = activeAgent && activeAgent.id === a.id;
@@ -198,7 +234,7 @@ export default function Studio({ domain, setDomain, exhaustedIds, activeAgent, o
             })}
             {isLoading && (
               <div className="flex items-center gap-2 text-xs text-emerald-400 p-2">
-                <RefreshCw className="w-4 h-4 animate-spin" /> Construction en cours par les agents gratuits...
+                <RefreshCw className="w-4 h-4 animate-spin" /> Construction en cours...
               </div>
             )}
           </div>
@@ -214,7 +250,7 @@ export default function Studio({ domain, setDomain, exhaustedIds, activeAgent, o
                   handleRunPrompt();
                 }
               }}
-              placeholder="Decrivez ce que vous voulez construire (ex: Un site vitrine pour une boulangerie)..."
+              placeholder="Decrivez ce que vous voulez construire..."
               className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 resize-none"
             />
             <div className="flex items-center justify-between gap-2">
@@ -236,26 +272,16 @@ export default function Studio({ domain, setDomain, exhaustedIds, activeAgent, o
           </div>
         </div>
 
-        {/* Panneau Droit : Canvas Studio */}
         <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col h-[74vh]">
           <div className="p-2.5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-1">
-              <button
-                onClick={function () { setRightTab("preview"); }}
-                className={"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition " + (rightTab === "preview" ? "bg-slate-800 text-emerald-400" : "text-slate-400 hover:text-white")}
-              >
+              <button onClick={function () { setRightTab("preview"); }} className={"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition " + (rightTab === "preview" ? "bg-slate-800 text-emerald-400" : "text-slate-400 hover:text-white")}>
                 <Eye className="w-3.5 h-3.5" /> Apercu
               </button>
-              <button
-                onClick={function () { setRightTab("source"); }}
-                className={"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition " + (rightTab === "source" ? "bg-slate-800 text-emerald-400" : "text-slate-400 hover:text-white")}
-              >
+              <button onClick={function () { setRightTab("source"); }} className={"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition " + (rightTab === "source" ? "bg-slate-800 text-emerald-400" : "text-slate-400 hover:text-white")}>
                 <Code className="w-3.5 h-3.5" /> Source
               </button>
-              <button
-                onClick={function () { setRightTab("memory"); }}
-                className={"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition " + (rightTab === "memory" ? "bg-slate-800 text-emerald-400" : "text-slate-400 hover:text-white")}
-              >
+              <button onClick={function () { setRightTab("memory"); }} className={"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition " + (rightTab === "memory" ? "bg-slate-800 text-emerald-400" : "text-slate-400 hover:text-white")}>
                 <Brain className="w-3.5 h-3.5" /> Memoire Locale
               </button>
             </div>
@@ -271,9 +297,7 @@ export default function Studio({ domain, setDomain, exhaustedIds, activeAgent, o
                   defaultValue=""
                 >
                   <option value="" disabled>Checkpoints ({checkpoints.length})</option>
-                  {checkpoints.map(function (c) {
-                    return <option key={c.id} value={c.id}>{c.label}</option>;
-                  })}
+                  {checkpoints.map(function (c) { return <option key={c.id} value={c.id}>{c.label}</option>; })}
                 </select>
               )}
               <button onClick={handleExport} disabled={!deliverable} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs text-slate-200">
@@ -303,39 +327,25 @@ export default function Studio({ domain, setDomain, exhaustedIds, activeAgent, o
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center text-slate-500 space-y-3">
                   <History className="w-10 h-10 text-slate-700" />
-                  <p className="text-sm max-w-md">Votre projet vivant apparaitra ici en direct (aperçu HTML interactif, visuel ou document). Tapez <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-xs">Ctrl+K</kbd> pour des idees rapides !</p>
+                  <p className="text-sm max-w-md">Votre projet vivant apparaitra ici en direct. Tapez <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-xs">Ctrl+K</kbd> ou activez votre IA locale WebGPU dans Parametres !</p>
                 </div>
               )
             )}
-
             {rightTab === "source" && (
-              <textarea
-                value={deliverable}
-                onChange={function (e) { setDeliverable(e.target.value); }}
-                placeholder="Le code ou texte genere apparaitra ici. Vous pouvez aussi le modifier librement."
-                className="w-full h-full bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs text-emerald-300 focus:outline-none resize-none"
-              />
+              <textarea value={deliverable} onChange={function (e) { setDeliverable(e.target.value); }} className="w-full h-full bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs text-emerald-300 focus:outline-none resize-none" />
             )}
-
             {rightTab === "memory" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between bg-slate-950 border border-slate-800 rounded-xl p-3">
                   <div className="flex items-center gap-2 text-xs text-slate-300">
-                    <ShieldAlert className="w-4 h-4 text-emerald-400" />
-                    Vos notes restent 100% privees dans votre navigateur (aucun compte, aucun serveur).
+                    <ShieldAlert className="w-4 h-4 text-emerald-400" /> Vos notes restent 100% privees dans votre navigateur.
                   </div>
                   <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 cursor-pointer">
                     <Upload className="w-3.5 h-3.5" /> Importer .txt/.md
                     <input type="file" accept=".txt,.md,.json,.csv" onChange={handleFileUpload} className="hidden" />
                   </label>
                 </div>
-                <textarea
-                  rows={14}
-                  value={localMemory}
-                  onChange={function (e) { setLocalMemory(e.target.value); }}
-                  placeholder="Collez ici votre profil, vos cours, votre charte ou notes de projet. Chaque agent utilisera automatiquement ce contexte..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-200 focus:outline-none focus:border-emerald-500"
-                />
+                <textarea rows={14} value={localMemory} onChange={function (e) { setLocalMemory(e.target.value); }} placeholder="Collez ici vos notes, cours ou contexte projet..." className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-200 focus:outline-none focus:border-emerald-500" />
               </div>
             )}
           </div>

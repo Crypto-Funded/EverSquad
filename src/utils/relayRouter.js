@@ -3,14 +3,36 @@ import squadsRegistry from "../../registry/squads.json";
 
 export const AGENTS = agentsRegistry;
 export const SQUADS = squadsRegistry;
+export const DEFAULT_PROXY_URL = "";
 
 export const DOMAINS = [
-  { id: "code", label: "Code & Web", color: "emerald" },
-  { id: "writing", label: "Redaction", color: "sky" },
-  { id: "design", label: "Design & Images", color: "violet" },
-  { id: "data", label: "Data & Analyse", color: "amber" },
-  { id: "marketing", label: "Marketing", color: "rose" }
+  { id: "code", label: "Code & Web" },
+  { id: "writing", label: "Redaction" },
+  { id: "design", label: "Design & Images" },
+  { id: "data", label: "Data & Analyse" },
+  { id: "marketing", label: "Marketing" }
 ];
+
+let webLlmEngine = null;
+
+export function isWebLlmReady() {
+  return Boolean(webLlmEngine);
+}
+
+export async function loadWebLlmEngine(onProgress) {
+  if (webLlmEngine) return webLlmEngine;
+  if (typeof navigator === "undefined" || !navigator.gpu) {
+    throw new Error("WebGPU n’est pas disponible sur ce navigateur.");
+  }
+  if (onProgress) onProgress("Chargement du moteur WebGPU...");
+  const webllm = await import(/* @vite-ignore */ "https://esm.sh/@mlc-ai/web-llm@0.2.85");
+  webLlmEngine = await webllm.CreateMLCEngine("Qwen2.5-0.5B-Instruct-q4f16_1-MLC", {
+    initProgressCallback: function (report) {
+      if (onProgress && report && report.text) onProgress(report.text);
+    }
+  });
+  return webLlmEngine;
+}
 
 export function getAgentsForDomain(domain) {
   const matched = AGENTS.filter(function (a) { return a.domain === domain; });
@@ -22,16 +44,16 @@ export function enhancePrompt(rawPrompt, domain) {
   const clean = (rawPrompt || "").trim();
   if (!clean) return "";
   if (domain === "code") {
-    return "Cree une page web HTML5 complete, autonome (avec Tailwind CDN ou CSS moderne integre), responsive et esthetique pour : " + clean + ". Renvoie uniquement le code HTML complet pret a afficher.";
+    return "Cree une page web HTML5 complete, autonome (avec Tailwind CDN), responsive et moderne pour : " + clean + ". Renvoie uniquement le code HTML complet pret a afficher.";
   }
   if (domain === "design") {
     return "High quality modern digital illustration, clean composition, vibrant lighting, " + clean;
   }
   if (domain === "marketing") {
-    return "Agis comme un stratege marketing senior. Produis un plan clair en Markdown (Positionnement, 3 Slogans, Plan d action en 5 etapes) pour : " + clean;
+    return "Agis comme un stratege marketing senior. Produis un plan clair en Markdown (Positionnement, 3 Slogans, Plan d’action en 5 etapes) pour : " + clean;
   }
   if (domain === "data") {
-    return "Structure et analyse clairement les donnees suivantes sous forme de tableau Markdown et synthese actionnable : " + clean;
+    return "Structure et analyse clairement ces donnees sous forme de tableau Markdown et synthese actionnable : " + clean;
   }
   return "Redige un contenu structure, clair, professionnel et engageant en francais en Markdown sur : " + clean;
 }
@@ -88,10 +110,10 @@ function buildLocalFallbackOutput(domain, prompt, memory) {
       "  <div class=\"max-w-2xl w-full bg-slate-900 border border-emerald-500/30 rounded-2xl p-8 shadow-2xl\">",
       "    <span class=\"inline-block px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 mb-4\">Genere par EverSquad Local Fallback</span>",
       "    <h1 class=\"text-3xl font-bold mb-3\">" + title + "</h1>",
-      "    <p class=\"text-slate-300 mb-6\">Votre projet a continue sans aucune interruption grace au relais automatique vers le moteur local du navigateur (" + memNote + ").</p>",
+      "    <p class=\"text-slate-300 mb-6\">Votre projet a continue sans interruption grace au relais automatique (" + memNote + ").</p>",
       "    <div class=\"grid grid-cols-1 sm:grid-cols-2 gap-4\">",
-      "      <div class=\"p-4 rounded-xl bg-slate-800/80 border border-slate-700\"><h2 class=\"font-semibold text-emerald-400\">Etape 1 : Structure</h2><p class=\"text-sm text-slate-400 mt-1\">Base responsive prete a personnaliser dans l editeur.</p></div>",
-      "      <div class=\"p-4 rounded-xl bg-slate-800/80 border border-slate-700\"><h2 class=\"font-semibold text-sky-400\">Etape 2 : Export</h2><p class=\"text-sm text-slate-400 mt-1\">Telechargez le fichier HTML ou partagez-le en 1 clic.</p></div>",
+      "      <div class=\"p-4 rounded-xl bg-slate-800/80 border border-slate-700\"><h2 class=\"font-semibold text-emerald-400\">Etape 1 : Structure</h2><p class=\"text-sm text-slate-400 mt-1\">Activez WebGPU IA ou connectez un Miroir Cloudflare dans Parametres pour une generation 100% dynamique.</p></div>",
+      "      <div class=\"p-4 rounded-xl bg-slate-800/80 border border-slate-700\"><h2 class=\"font-semibold text-sky-400\">Etape 2 : Export</h2><p class=\"text-sm text-slate-400 mt-1\">Modifiez dans Source, sauvegardez un Checkpoint ou partagez par lien.</p></div>",
       "    </div>",
       "  </div>",
       "</body>",
@@ -106,113 +128,137 @@ function buildLocalFallbackOutput(domain, prompt, memory) {
     "## Synthese du Projet",
     "- **Domaine :** " + domain,
     "- **Objectif :** " + prompt,
-    "- **Statut :** Continuité garantie sans inscription ni interruption.",
+    "- **Astuce v1.1 :** Cliquez sur **Parametres (Miroir & IA)** en haut pour activer la vraie IA WebGPU locale ou brancher votre Miroir Cloudflare gratuit !",
     "",
-    "## Plan d action propose",
+    "## Plan d’action propose",
     "1. Definir les 3 priorites cles du livrable.",
-    "2. Affiner le contenu directement dans l onglet Source / Editeur a droite.",
-    "3. Sauvegarder un Checkpoint puis exporter en .md ou partager par lien."
+    "2. Affiner directement dans l’onglet Source a droite.",
+    "3. Exporter ou partager par lien magique."
   ].join("\n");
 }
 
-export async function executeWithRelay({ domain, prompt, currentDeliverable, localMemory, exhaustedIds, onRelay }) {
-  const pool = getAgentsForDomain(domain);
-  const available = pool.filter(function (a) { return exhaustedIds.indexOf(a.id) === -1; });
-  const queue = available.length > 0 ? available : [pool[pool.length - 1]];
+async function tryChromeBuiltInAi(fullPrompt) {
+  try {
+    if (typeof window === "undefined" || !window.LanguageModel) return null;
+    const avail = await window.LanguageModel.availability();
+    if (avail !== "available" && avail !== "readily") return null;
+    const session = await window.LanguageModel.create();
+    const out = await session.prompt(fullPrompt);
+    return out || null;
+  } catch {
+    return null;
+  }
+}
 
+export async function executeWithRelay({ domain, prompt, currentDeliverable, localMemory, exhaustedIds, proxyUrl, onRelay }) {
+  const pool = getAgentsForDomain(domain);
+  const activeProxy = (proxyUrl || DEFAULT_PROXY_URL || "").trim();
   const contextSummary = currentDeliverable
-    ? "Etat actuel du projet (extrait) : " + currentDeliverable.slice(0, 600)
+    ? "Etat actuel du projet (extrait) : " + currentDeliverable.slice(0, 700)
     : "Nouveau projet";
-  const memorySnippet = localMemory ? "Memoire utilisateur : " + localMemory.slice(0, 400) : "";
+  const memorySnippet = localMemory ? "Memoire utilisateur : " + localMemory.slice(0, 450) : "";
+  const systemPrompt = "Tu es EverSquad, un assistant expert concis et efficace dans le domaine : " + domain + ".";
   const fullPrompt = [
-    "Tu es un agent expert EverSquad dans le domaine : " + domain + ".",
     memorySnippet,
     contextSummary,
     "Demande utilisateur : " + prompt,
-    domain === "code" ? "Reponds avec un fichier HTML complet et fonctionnel." : "Reponds de facon claire et structuree en francais."
+    domain === "code" ? "Reponds uniquement avec un fichier HTML5 complet et fonctionnel (Tailwind CDN autorise)." : "Reponds de facon claire et structuree en francais."
   ].filter(Boolean).join("\n\n");
 
   let previousAgent = null;
 
-  for (let i = 0; i < queue.length; i++) {
-    const agent = queue[i];
-    if (previousAgent && onRelay) {
-      onRelay({ from: previousAgent, to: agent, reason: "Quota ou indisponibilite detectee — contexte compresse transfere" });
-    }
-
-    if (agent.authType === "proxy_free_tier") {
-      previousAgent = agent;
-      continue;
-    }
-
-    if (agent.authType === "local_browser") {
-      const localOut = buildLocalFallbackOutput(domain, prompt, localMemory);
-      return {
-        agent: agent,
-        rawText: "Reponse generee par " + agent.name + " (moteur de secours local infini).",
-        deliverable: localOut,
-        type: domain === "code" ? "html" : "markdown",
-        relayed: Boolean(previousAgent)
-      };
-    }
-
-    if (domain === "design" && agent.endpoint.indexOf("image.pollinations.ai") !== -1) {
-      const imgPrompt = encodeURIComponent(enhancePrompt(prompt, "design"));
-      const imgUrl = "https://image.pollinations.ai/prompt/" + imgPrompt + "?width=1024&height=640&nologo=true";
-      return {
-        agent: agent,
-        rawText: "Visuel genere gratuitement par " + agent.name + ".",
-        deliverable: imgUrl,
-        type: "image",
-        relayed: Boolean(previousAgent)
-      };
-    }
-
+  // 1. Tenter le Miroir Proxy Cloudflare (si configure)
+  if (activeProxy && exhaustedIds.indexOf("cloudflare-mirror") === -1) {
     try {
       const controller = new AbortController();
-      const timer = setTimeout(function () { controller.abort(); }, 14000);
-      const res = await fetch("https://text.pollinations.ai/", {
+      const timer = setTimeout(function () { controller.abort(); }, 20000);
+      const res = await fetch(activeProxy, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
-        body: JSON.stringify({
-          messages: [
-            { role: "system", content: "Tu es EverSquad, un assistant expert concis et efficace." },
-            { role: "user", content: fullPrompt }
-          ],
-          model: "openai"
-        })
+        body: JSON.stringify({ prompt: fullPrompt, systemPrompt: systemPrompt, domain: domain })
       });
       clearTimeout(timer);
-      if (!res.ok || res.status === 429) {
-        previousAgent = agent;
-        continue;
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.text) {
+          const clean = extractDeliverable(data.text);
+          const isHtml = clean.indexOf("<html") !== -1 || clean.indexOf("<!DOCTYPE") !== -1;
+          const mirrorAgent = { id: "cloudflare-mirror", name: "Miroir Cloud (" + (data.providerUsed || "Free Tier") + ")", domain: domain };
+          if (data.relays > 0 && onRelay) {
+            onRelay({ from: { name: "Fournisseur principal" }, to: mirrorAgent, reason: data.relays + " relais effectue(s) automatiquement cote miroir" });
+          }
+          return {
+            agent: mirrorAgent,
+            rawText: isHtml ? "Code HTML genere par " + mirrorAgent.name + " et affiche dans le Canvas." : data.text,
+            deliverable: clean,
+            type: isHtml ? "html" : "markdown",
+            relayed: data.relays > 0
+          };
+        }
       }
-      const text = await res.text();
-      if (!text || text.length < 10) {
-        previousAgent = agent;
-        continue;
-      }
-      const clean = extractDeliverable(text);
-      const isHtml = clean.indexOf("<html") !== -1 || clean.indexOf("<!DOCTYPE") !== -1;
-      return {
-        agent: agent,
-        rawText: isHtml ? "Code HTML genere par " + agent.name + " et affiche dans le Canvas." : text,
-        deliverable: clean,
-        type: isHtml ? "html" : "markdown",
-        relayed: Boolean(previousAgent)
-      };
+      previousAgent = { id: "cloudflare-mirror", name: "Miroir Cloud" };
     } catch {
-      previousAgent = agent;
+      previousAgent = { id: "cloudflare-mirror", name: "Miroir Cloud" };
     }
   }
 
+  // 2. Tenter Chrome Built-in AI (Gemini Nano local sans telechargement)
+  const chromeText = await tryChromeBuiltInAi(fullPrompt);
+  if (chromeText) {
+    const chromeAgent = { id: "chrome-builtin", name: "Chrome Built-in AI", domain: domain };
+    if (previousAgent && onRelay) {
+      onRelay({ from: previousAgent, to: chromeAgent, reason: "Bascule vers l’IA integree du navigateur" });
+    }
+    const cleanChrome = extractDeliverable(chromeText);
+    const isHtmlC = cleanChrome.indexOf("<html") !== -1 || cleanChrome.indexOf("<!DOCTYPE") !== -1;
+    return {
+      agent: chromeAgent,
+      rawText: isHtmlC ? "Code HTML genere par Chrome Built-in AI." : chromeText,
+      deliverable: cleanChrome,
+      type: isHtmlC ? "html" : "markdown",
+      relayed: Boolean(previousAgent)
+    };
+  }
+
+  // 3. Tenter WebLLM WebGPU (si deja charge par l’utilisateur)
+  if (webLlmEngine) {
+    const gpuAgent = { id: "webllm-gpu", name: "WebGPU Qwen-0.5B (Local)", domain: domain };
+    if (previousAgent && onRelay) {
+      onRelay({ from: previousAgent, to: gpuAgent, reason: "Relais vers votre GPU local (quota infini)" });
+    }
+    try {
+      const reply = await webLlmEngine.chat.completions.create({
+        messages: [{ role: "system", content: systemPrompt }, { role: "user", content: fullPrompt }],
+        temperature: 0.7
+      });
+      const gpuText = reply && reply.choices && reply.choices[0] ? reply.choices[0].message.content : "";
+      if (gpuText) {
+        const cleanGpu = extractDeliverable(gpuText);
+        const isHtmlG = cleanGpu.indexOf("<html") !== -1 || cleanGpu.indexOf("<!DOCTYPE") !== -1;
+        return {
+          agent: gpuAgent,
+          rawText: isHtmlG ? "Code HTML genere en local sur votre GPU par WebLLM !" : gpuText,
+          deliverable: cleanGpu,
+          type: isHtmlG ? "html" : "markdown",
+          relayed: Boolean(previousAgent)
+        };
+      }
+    } catch {
+      previousAgent = gpuAgent;
+    }
+  }
+
+  // 4. Fallback instantane du Studio (garantie 0 interruption)
   const fallbackAgent = pool[pool.length - 1];
+  if (previousAgent && onRelay) {
+    onRelay({ from: previousAgent, to: fallbackAgent, reason: "Relais instantane vers le moteur local de secours" });
+  }
   return {
     agent: fallbackAgent,
-    rawText: "Relais complet vers le moteur local.",
+    rawText: "Reponse generee par " + fallbackAgent.name + " (moteur de secours garanti sans coupure).",
     deliverable: buildLocalFallbackOutput(domain, prompt, localMemory),
     type: domain === "code" ? "html" : "markdown",
-    relayed: true
+    relayed: Boolean(previousAgent)
   };
 }
